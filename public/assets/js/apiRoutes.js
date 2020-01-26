@@ -23,7 +23,7 @@ app.post('/api/notes/:id', function(req,res){
     var data = JSON.stringify(newDatebase)
     console.log(newDatebase)
     fs.writeFileSync('./db/db.json',data)
-    return res.json()
+    return res.json(data)
     
 })
 

@@ -8,8 +8,8 @@
   <title>Note Taker</title>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/4.1.3/flatly/bootstrap.min.css" />
-  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU"
-    crossorigin="anonymous">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css"
+    integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
   <!-- <link rel="stylesheet" href="/assets/css/styles.css"> -->
 </head>
 
@@ -43,35 +43,35 @@
 
 
   <script>
-    
 
-    
+
+
 
 
 
 
     var currentId = 0
-    var renderNoteList = function(notes) {
-  $noteList.empty();
+    var renderNoteList = function (notes) {
+      $noteList.empty();
 
-  var noteListItems = [];
+      var noteListItems = [];
 
-  for (var i = 0; i < notes.length; i++) {
-    var note = notes[i];
-    console.log(note)
+      for (var i = 0; i < notes.length; i++) {
+        var note = notes[i];
+        console.log(note)
 
-    var $li = $("<li class='list-group-item'>").data(note);
-    var $span = $("<span>").text(note.title);
-    var $delBtn = $(
-      `<i id='${note.id}' class='fas fa-trash-alt float-right text-danger delete-note'>`
-    );
+        var $li = $("<li class='list-group-item'>").data(note);
+        var $span = $("<span>").text(note.title);
+        var $delBtn = $(
+          `<i id='${note.id}' class='fas fa-trash-alt float-right text-danger delete-note'>`
+        );
 
-    $li.append($span, $delBtn);
-    noteListItems.push($li);
-  }
+        $li.append($span, $delBtn);
+        noteListItems.push($li);
+      }
 
-  $noteList.append(noteListItems);
-};
+      $noteList.append(noteListItems);
+    };
 
     var noMore = $('.delete-note')
     var noteTitle = $("#note-title").val();
@@ -79,58 +79,72 @@
     var $saveNoteBtn = $(".save-note");
     var $newNoteBtn = $(".new-note");
     var $noteList = $(".list-container .list-group");
-  currentId++
+    currentId++
+
+
+    var activeNote = { title: noteTitle, text: noteText };
+
+    var saveNote = function (note) {
+      return $.ajax({
+        url: "/api/notes",
+        data: note,
+        method: "POST"
+      });
+    };
+
+    $saveNoteBtn.on('click', (event) => {
+
+      event.preventDefault()
+
+      var noteTitle = $("#note-title").val();
+      var noteText = $("#note-text").val();
+      var $saveNoteBtn = $(".save-note");
+      var $newNoteBtn = $(".new-note");
+      var $noteList = $(".list-container .list-group");
+      var id = noteTitle.toLowerCase().split(" ").join('')
+
+
+
+      var activeNote = { title: noteTitle, text: noteText, id: id };
+
+      saveNote(activeNote)
+      console.log('helpo');
+      console.log(activeNote)
+    })
+   var renderList = data => {
+          $.get('/api/notes', data => {
+            renderNoteList(data)
+          })
+        }
+      $.get('/api/notes', data => {
+
+      renderNoteList(data)
+    }).then(data => {
+      $('.delete-note').on('click', function (event) {
+        event.preventDefault()
+        console.log(this.id)
+        $.post('/api/notes/' + this.id, function (data) {
+          console.log(data)
+
+        })
+
+
+      }
+      )
+    }
+    )
+  
   
 
-    var activeNote = {title:noteTitle,text:noteText};
-    
-    var saveNote = function(note) {
-  return $.ajax({
-    url: "/api/notes",
-    data: note,
-    method: "POST"
-  });
-};
 
-$saveNoteBtn.on('click',(event)=>{
-
-  event.preventDefault()
   
-  var noteTitle = $("#note-title").val();
-    var noteText = $("#note-text").val();
-    var $saveNoteBtn = $(".save-note");
-    var $newNoteBtn = $(".new-note");
-    var $noteList = $(".list-container .list-group");
-    var id = noteTitle.toLowerCase().split(" ").join('')
-   
-
-
-    var activeNote = {title:noteTitle,text:noteText,id:id};
-    
-  saveNote(activeNote)
-  console.log('helpo');
-  console.log(activeNote)
-})
-$.get('/api/notes', data=>{
-
-  renderNoteList(data)
-}).then(data=>{
-  $('.delete-note').on('click',function(event){
-  event.preventDefault()
-   console.log(this.id)
-   $.post('/api/notes/'+ this.id, function (data){
-     console.log(data)
-   })
-
-})
-})
 
 
 
 
 
 
-    </script>
+  </script>
 </body>
 
 </html>
